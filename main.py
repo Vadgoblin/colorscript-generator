@@ -26,10 +26,19 @@ def get_pokemon_art(path):
         for j in range(columns):
             top = image[i, j, :]
             bottom = image[i+1, j, :]
+            top_is_transparent = top[3] == 0
+            bottom_is_transparent = bottom[3] == 0
 
-            magic_string += get_color_escape(top[0], top[1], top[2], background=False)
-            magic_string += get_color_escape(bottom[0], bottom[1], bottom[2], background=True)
-            magic_string += "▀"
+            if bottom_is_transparent and top_is_transparent:
+                magic_string += reset_background + " "
+            elif bottom_is_transparent and not top_is_transparent:
+                magic_string += reset_background + get_color_escape(top[0], top[1], top[2]) + "▀"
+            elif not bottom_is_transparent and top_is_transparent:
+                magic_string += reset_background + get_color_escape(bottom[0], bottom[1], bottom[2]) + "▄"
+            else:
+                magic_string += get_color_escape(top[0], top[1], top[2], background=False)
+                magic_string += get_color_escape(bottom[0], bottom[1], bottom[2], background=True)
+                magic_string += "▀"
 
         magic_string += '\033[0m\n'
 
@@ -41,6 +50,11 @@ def get_color_escape(r, g, b, background=False):
     return '\033[{};2;{};{};{}m'.format(48 if background else 38, r, g, b)
 
 
+reset_color = '\033[0m'
+reset_foreground = '\033[39m'
+reset_background = '\033[49m'
+
+
 #get_pokemon_art("DSC00928.png")
-write_pokemon_to_file(get_pokemon_art("oddheight.png"), "oddheight.png.txt")
+write_pokemon_to_file(get_pokemon_art("icon2.png"), "icon2ca.png.txt")
 #print( get_pokemon_art("DSC00928.png"))
