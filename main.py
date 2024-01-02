@@ -16,7 +16,10 @@ def get_pokemon_art(path):
 
     rows, columns, _ = image.shape
     if rows % 2 != 0:
-        raise "image height must be devideable by 2"
+        # Add a transparent row at the bottom
+        transparent_row = np.zeros((1, columns, 4), dtype=np.uint8)
+        transparent_row[:, :, 3] = 0  # Set alpha channel to 0 for transparency
+        image = np.vstack((image, transparent_row))
 
     # generating the string
     for i in range(0, rows, 2):
@@ -39,5 +42,5 @@ def get_color_escape(r, g, b, background=False):
 
 
 #get_pokemon_art("DSC00928.png")
-write_pokemon_to_file(get_pokemon_art("mama.png"),"mama.txt")
+write_pokemon_to_file(get_pokemon_art("oddheight.png"), "oddheight.png.txt")
 #print( get_pokemon_art("DSC00928.png"))
