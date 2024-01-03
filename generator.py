@@ -105,7 +105,7 @@ def get_2pixel(top, bottom):
     elif is_transparent(top) and not is_transparent(bottom):
         if not is_last_background_transparent:
             magic_string += reset_background_color()
-        if np.all(bottom != last_foreground_color):
+        if np.any(bottom != last_foreground_color):
             magic_string += set_foreground_color(bottom)
         magic_string += "▄"
 
@@ -113,7 +113,7 @@ def get_2pixel(top, bottom):
     elif not is_transparent(top) and is_transparent(bottom):
         if not is_last_background_transparent:
             magic_string += reset_background_color()
-        if np.all(top != last_foreground_color):
+        if np.any(top != last_foreground_color):
             magic_string += set_foreground_color(top)
         magic_string += "▀"
 
