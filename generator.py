@@ -3,8 +3,10 @@ import numpy as np
 from PIL import Image
 import sys
 
+
 def print_to_stdout(path_to_image):
     image, rows, columns = prepare_image(path_to_image)
+
     for i in range(0, rows, 2):
         tmp_string = ""
 

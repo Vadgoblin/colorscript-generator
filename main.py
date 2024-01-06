@@ -22,4 +22,3 @@ if __name__ == '__main__':
         generator.print_to_stdout(args.image)
     else:
         write_string_to_file(generator.get_magic_string(args.image), args.o)
-    # print(args.image, args.output)
