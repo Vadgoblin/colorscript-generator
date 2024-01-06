@@ -1,7 +1,6 @@
 import PIL
 import numpy as np
 from PIL import Image
-from get_color_escape import get_color_escape
 import sys
 
 def print_to_stdout(path_to_image):
@@ -53,6 +52,11 @@ def prepare_image(path_to_image):
 
 def is_transparent(color):
     return color[3] == 0
+
+
+def get_color_escape(r, g, b, background=False):
+    """ Given rgb values give the escape sequence for printing out the color"""
+    return '\033[{};2;{};{};{}m'.format(48 if background else 38, r, g, b)
 
 
 last_foreground_color = [-1, -1, -1, -1]
