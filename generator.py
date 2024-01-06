@@ -1,7 +1,8 @@
+import PIL
 import numpy as np
 from PIL import Image
 from get_color_escape import get_color_escape
-
+import sys
 
 def print_to_stdout(path_to_image):
     image, rows, columns = prepare_image(path_to_image)
@@ -34,15 +35,20 @@ def get_magic_string(path_to_image):
 
 
 def prepare_image(path_to_image):
-    image = np.array(Image.open(path_to_image).convert('RGBA'))
+    try:
+        image = np.array(Image.open(path_to_image).convert('RGBA'))
 
-    rows, columns, _ = image.shape
-    if rows % 2 != 0:
-        # Add a transparent row at the bottom
-        transparent_row = np.zeros((1, columns, 4), dtype=np.uint8)
-        transparent_row[:, :, 3] = 0  # Set alpha channel to 0 for transparency
-        image = np.vstack((image, transparent_row))
-    return image, rows, columns
+        rows, columns, _ = image.shape
+        if rows % 2 != 0:
+            # Add a transparent row at the bottom
+            transparent_row = np.zeros((1, columns, 4), dtype=np.uint8)
+            transparent_row[:, :, 3] = 0  # Set alpha channel to 0 for transparency
+            image = np.vstack((image, transparent_row))
+        return image, rows, columns
+
+    except PIL.UnidentifiedImageError:
+        print(f"Provided file ({path_to_image}) is not an image.", file=sys.stderr)
+        exit(-1)
 
 
 def is_transparent(color):
