@@ -3,12 +3,38 @@ from PIL import Image
 from get_color_escape import get_color_escape
 
 
-def get_magic_string(path):
-    # string to hold the color formatted string
+def print_to_stdout(path_to_image):
+    image, rows, columns = prepare_image(path_to_image)
+    for i in range(0, rows, 2):
+        tmp_string = ""
+
+        for j in range(columns):
+            top = image[i, j, :]
+            bottom = image[i + 1, j, :]
+            tmp_string += get_2pixel(top, bottom)
+
+        tmp_string += reset_all_color()
+        print(tmp_string)
+
+
+def get_magic_string(path_to_image):
     magic_string = ''
 
-    # loading in image
-    image = np.array(Image.open(path).convert('RGBA'))
+    image, rows, columns = prepare_image(path_to_image)
+
+    for i in range(0, rows, 2):
+        for j in range(columns):
+            top = image[i, j, :]
+            bottom = image[i + 1, j, :]
+            magic_string += get_2pixel(top, bottom)
+
+        magic_string += reset_all_color() + '\n'
+
+    return magic_string
+
+
+def prepare_image(path_to_image):
+    image = np.array(Image.open(path_to_image).convert('RGBA'))
 
     rows, columns, _ = image.shape
     if rows % 2 != 0:
@@ -16,21 +42,7 @@ def get_magic_string(path):
         transparent_row = np.zeros((1, columns, 4), dtype=np.uint8)
         transparent_row[:, :, 3] = 0  # Set alpha channel to 0 for transparency
         image = np.vstack((image, transparent_row))
-
-    # generating the string
-    for i in range(0, rows, 2):
-        tmp = ''
-        for j in range(columns):
-            top = image[i, j, :]
-            bottom = image[i + 1, j, :]
-            #magic_string += get_2pixel(top, bottom)
-            tmp += get_2pixel(top, bottom)
-
-        magic_string += tmp
-        print(tmp)
-        magic_string += reset_all_color() + '\n'
-
-    return magic_string
+    return image, rows, columns
 
 
 def is_transparent(color):
@@ -141,82 +153,3 @@ def get_2pixel(top, bottom):
             magic_string += "▀"
 
     return magic_string
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""    if is_top_transparent or is_bottom_transparent:
-        if is_last_bg_transparent:
-            magic_string += reset_background
-            is_last_bg_transparent = True
-
-        if is_top_transparent and is_bottom_transparent:
-            magic_string += " "
-        elif is_top_transparent and not is_bottom_transparent:
-            if np.any(bottom != last_foreground_color):
-                magic_string += get_color_escape(bottom[0], bottom[1], bottom[2], background=False)
-                last_foreground_color = bottom
-            magic_string += "▄"
-        elif not is_top_transparent and is_bottom_transparent:
-            if np.any(top != last_foreground_color):
-                magic_string += get_color_escape(top[0], top[1], top[2], background=False)
-                last_foreground_color = top
-            magic_string += "▀"
-
-    else:
-        if np.all(top == last_foreground_color) and np.all(bottom == last_background_color):
-            magic_string += "▀"
-        elif np.all(bottom == last_foreground_color) and np.all(top == last_background_color):
-            magic_string += "▄"
-
-        elif np.all(top == last_foreground_color):
-            magic_string += get_color_escape(bottom[0], bottom[1], bottom[2], background=True)
-            magic_string += "▀"
-            last_background_color = bottom
-        elif np.all(top == last_background_color):
-            magic_string += get_color_escape(bottom[0], bottom[1], bottom[2], background=False)
-            magic_string += "▄"
-            last_foreground_color = bottom
-
-        elif np.all(bottom == last_foreground_color):
-            magic_string += get_color_escape(top[0], top[1], top[2], background=True)
-            magic_string += "▀"
-            last_background_color = top
-        elif np.all(bottom == last_background_color):
-            magic_string += get_color_escape(top[0], top[1], top[2], background=False)
-            magic_string += "▄"
-            last_foreground_color = top
-
-        else:
-            magic_string += get_color_escape(top[0], top[1], top[2], background=False)
-            magic_string += get_color_escape(bottom[0], bottom[1], bottom[2], background=True)
-            magic_string += "▀"
-            last_foreground_color = top
-            last_background_color = bottom"""
