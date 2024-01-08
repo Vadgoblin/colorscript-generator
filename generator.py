@@ -2,10 +2,12 @@ import PIL
 import numpy as np
 from PIL import Image
 import sys
+from main import die
+import os
 
 
-def print_to_stdout(path_to_image):
-    image, rows, columns = prepare_image(path_to_image)
+def print_to_stdout(path_to_image, size):
+    image, rows, columns = prepare_image(path_to_image, size)
 
     for i in range(0, rows, 2):
         tmp_string = ""
@@ -19,10 +21,10 @@ def print_to_stdout(path_to_image):
         print(tmp_string)
 
 
-def get_magic_string(path_to_image):
+def get_magic_string(path_to_image, size):
     magic_string = ''
 
-    image, rows, columns = prepare_image(path_to_image)
+    image, rows, columns = prepare_image(path_to_image, size)
 
     for i in range(0, rows, 2):
         for j in range(columns):
@@ -35,10 +37,14 @@ def get_magic_string(path_to_image):
     return magic_string
 
 
-def prepare_image(path_to_image):
+def prepare_image(path_to_image, size):
     try:
-        image = np.array(Image.open(path_to_image).convert('RGBA'))
+        image = Image.open(path_to_image).convert('RGBA')
 
+        if size is not None:
+            image = resize_image(image, size)
+
+        image = np.array(image)
         rows, columns, _ = image.shape
         if rows % 2 != 0:
             # Add a transparent row at the bottom
@@ -48,8 +54,44 @@ def prepare_image(path_to_image):
         return image, rows, columns
 
     except PIL.UnidentifiedImageError:
-        print(f"Provided file ({path_to_image}) is not an image.", file=sys.stderr)
-        exit(-1)
+        die(f"Provided file ({path_to_image}) is not an image.")
+
+
+def resize_image(image, size):
+    rows, columns = image.size  # rows = height, columns = width
+    aspect_ratio = columns / rows
+
+    new_width, new_height = -1, -1
+
+    if size == "auto":
+        terminal_size = os.get_terminal_size()
+
+        max_width = terminal_size.columns
+        max_height = terminal_size.lines * 2
+
+        if aspect_ratio > max_width/max_height:
+            new_width = max_width
+            new_height = int(max_width // aspect_ratio)
+        else:
+            new_height = max_height
+            new_width = int(max_height * aspect_ratio)
+
+    else:
+        width, height = size
+
+        if width == -1:
+            new_height = height
+            new_width = int(new_height / aspect_ratio)
+        elif height == -1:
+            new_width = width
+            new_height = int(new_width * aspect_ratio)
+
+        else:
+            new_width = width
+            new_height = height
+
+    resized_image = image.resize((new_width, new_height))
+    return resized_image
 
 
 def is_transparent(color):
