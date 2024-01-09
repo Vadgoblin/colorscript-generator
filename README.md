@@ -1,6 +1,6 @@
-# Color script generator
+# Colorscript generator
 
-Display image in the terminal or generate color script.
+Display image in the terminal or generate colorscript.
 Inspired by and based on [Phoney badger's pokemon-colorscripts ](https://gitlab.com/phoneybadger/pokemon-colorscripts)
 
 ## Description
