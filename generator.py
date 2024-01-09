@@ -58,8 +58,8 @@ def prepare_image(path_to_image, size):
 
 
 def resize_image(image, size):
-    rows, columns = image.size  # rows = height, columns = width
-    aspect_ratio = columns / rows
+    width, height = image.size
+    aspect_ratio = width / height
 
     new_width, new_height = -1, -1
 
@@ -69,26 +69,28 @@ def resize_image(image, size):
         max_width = terminal_size.columns
         max_height = terminal_size.lines * 2
 
-        if aspect_ratio > max_width/max_height:
-            new_width = max_width
-            new_height = int(max_width // aspect_ratio)
+        if max_width < width or max_height < height:
+            if aspect_ratio > max_width/max_height:
+                new_width = max_width
+                new_height = int(max_width / aspect_ratio)
+            else:
+                new_height = max_height
+                new_width = int(max_height * aspect_ratio)
         else:
-            new_height = max_height
-            new_width = int(max_height * aspect_ratio)
+            new_width = width
+            new_height = height
 
     else:
-        width, height = size
-
-        if width == -1:
-            new_height = height
-            new_width = int(new_height / aspect_ratio)
-        elif height == -1:
-            new_width = width
-            new_height = int(new_width * aspect_ratio)
+        if size[0] == -1:
+            new_height = size[1]
+            new_width = int(new_height * aspect_ratio)
+        elif size[1] == -1:
+            new_width = size[0]
+            new_height = int(new_width / aspect_ratio)
 
         else:
-            new_width = width
-            new_height = height
+            new_width = size[0]
+            new_height = size[1]
 
     resized_image = image.resize((new_width, new_height))
     return resized_image
