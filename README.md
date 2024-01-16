@@ -24,10 +24,10 @@ positional arguments:
 options:
   -h, --help      show this help message and exit
   -o example.txt  write output into a file instead of printing it to the terminal
-  --no-resize     do not resize the image automatically; only have effect when image is displayed directly in the
-                  terminal
-  -s 123x123      resizes the image; if width or height is not provided (e.g., "x64" or "32x"), it will be automatically
-                  calculated
+  --no-resize     do not resize the image automatically; only have effect when image
+                  is displayed directly in the terminal
+  -s 123x123      resizes the image; if width or height is not provided (e.g., "x64" or "32x"),
+                  it will be automatically calculated
 ```
 
 ### Requirements
