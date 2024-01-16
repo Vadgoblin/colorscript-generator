@@ -3,6 +3,8 @@
 Display image in the terminal or generate colorscript.
 Inspired by and based on [Phoney badger's pokemon-colorscripts ](https://gitlab.com/phoneybadger/pokemon-colorscripts)
 
+![demo of program in action](./demo.webp)
+
 ## Description
 Converts an image into a sequence of ANSI escape codes and [Block Elements](https://en.wikipedia.org/wiki/Block_Elements).
 When rendered in a terminal emulator, it will display the image.
